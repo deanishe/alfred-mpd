@@ -248,7 +248,10 @@ vars={allvars}
 		</dict>
 	</array>
 	<key>readme</key>
-	<string></string>
+	<string>Music Player Daemon
+===================
+
+Search &amp; control an mpd server from Alfred.</string>
 	<key>uidata</key>
 	<dict>
 		<key>105B9F08-8034-4E8B-AC51-DAC1967EC61B</key>
@@ -319,8 +322,10 @@ vars={allvars}
 		<string>/usr/local/bin/mpc</string>
 		<key>MPD_HOST</key>
 		<string>localhost</string>
+		<key>MPD_PASSWORD</key>
+		<string></string>
 		<key>MPD_PORT</key>
-		<string>6767</string>
+		<string>6600</string>
 	</dict>
 	<key>version</key>
 	<string>0.1.0-alpha</string>

@@ -26,7 +26,7 @@ Commands:
     search          Search tracks
     stats           Show MPD library stats
     status          Show MPD server status
-    do              Perform workflow action
+    do              Perform a non-interactive action
 
 """
 
@@ -234,26 +234,26 @@ def do_stats(opts):
     cur_track = mpd.current()
     queue = mpd.queue()
 
-    # server host
-    wf.add_item(u'MPD connected to {}:{}'.format(
-                mpd.MPD_HOST, mpd.MPD_PORT))
-
-    # current track
-    if cur_track:
+    if cur_track:  # name of current track, actions play/pause
         log.debug(u'current=%r', cur_track)
+
         playing = mpd.playing()
         name = u'"{t.title}" by {t.artist}'.format(t=cur_track)
         status = u'Now Playing: ' if playing else u'Paused: '
-        # TODO: show paused/now playing
+
         it = wf.add_item(
             status + name,
             u'Track {t.track} of "{t.album}"'.format(t=cur_track),
             arg=cur_track.file,
             valid=True,
-            icon=ICON_PLAY,
         )
         it.setvar('ampd_action', 'playpause')
         it.setvar('ampd_reopen', 'yes')
+
+    else:  # server host info
+        wf.add_item(u'MPD running on {}:{}'.format(
+                    mpd.MPD_HOST, mpd.MPD_PORT))
+
 
     if len(queue):
         wf.add_item(

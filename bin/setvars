@@ -1,0 +1,112 @@
+#!/usr/bin/env zsh
+
+set -e
+
+here="$( cd "$( dirname "$0" )"; pwd )"
+root="$( cd "$here/../"; pwd )"
+ip="${root}/src/info.plist"
+
+default_host=localhost
+default_port=6600
+default_password=
+
+prog="$( basename "$0" )"
+
+fromenv=false
+verbose=false
+
+# log <arg>... | Echo arguments to STDERR
+log() {
+  echo "$@" >&2
+}
+
+# info <arg>.. | Write args to STDERR if VERBOSE is true
+info() {
+  $verbose && log $(print -P "%F{blue}..%f") "$@"
+  return 0
+}
+
+# success <arg>.. | Write green "ok" and args to STDERR if VERBOSE is true
+success() {
+  $verbose && log $(print -P "%F{green}ok%f") "$@"
+  return 0
+}
+
+# warn <arg>.. | Write yellow "warning" and args to STDERR
+warn() {
+  log $(print -P '%F{yellow}warning%f') "$@"
+}
+
+# error <arg>.. | Write red "error" and args to STDERR
+error() {
+  log $(print -P '%F{red}error%f') "$@"
+}
+
+# fail <arg>.. | Write red "error" and args to STDERR, then exit with status 1
+fail() {
+  error "$@"
+  exit 1
+}
+
+# setvar <name> <value> | Set a workflow variable in info.plist
+setvar() {
+  local n=$1
+  local v=$2
+  /usr/libexec/PlistBuddy -c "Set :variables:$n \"$v\"" "$ip"
+}
+
+usage() {
+cat <<EOF
+$prog [options]
+
+Set MPD variables in info.plist to default values
+or to the values specified by the environment
+variables MPD_HOST, MPD_PORT and MPD_PASSWORD.
+
+Usage:
+    $prog [-v] [-e]
+    $prog -h
+
+Options:
+    -e      Set variables from environment variables, not defaults
+    -h      Show this help message and exit
+    -v      Be verbose
+EOF
+}
+
+while getopts ":ehv" opt; do
+  case $opt in
+    e)
+      fromenv=true;;
+    h)
+      usage
+      exit 0;;
+    v)
+      verbose=true;;
+    \?)
+      fail "invalid option: -$OPTARG";;
+  esac
+done
+shift $((OPTIND-1))
+
+$fromenv && {
+  test -n "$MPD_HOST" || MPD_HOST=$default_host
+  test -n "$MPD_PORT" || MPD_PORT=$default_port
+  test -n "$MPD_PASSWORD" || MPD_PASSWORD=$default_password
+} || {
+  MPD_HOST=$default_host
+  MPD_PORT=$default_port
+  MPD_PASSWORD=$default_password
+}
+
+setvar MPD_HOST $MPD_HOST
+success "set MPD_HOST to $MPD_HOST"
+setvar MPD_PORT $MPD_PORT
+success "set MPD_PORT to $MPD_PORT"
+setvar MPD_PASSWORD $MPD_PASSWORD
+success "set MPD_PASSWORD"
+
+verbose=true
+success "updated workflow variables in info.plist"
+
+exit 0
