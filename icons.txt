@@ -1,0 +1,23 @@
+# Icons from webfonts via http://icons.deanishe.net
+#
+# Script bin/icons reads this file and downloads the
+# specified icons to src/icons
+#
+# filename        font name     colour   icon name
+
+album             material      2B9B1E    album
+album-alt         material      558EE1    collection-music
+artist            material      F8AC30    face
+error             elusive       CA0022    error-alt
+# track              fontawesome   AF49FE    track-audio-o
+track              material      AF49FE    audio
+track-queued       material      558EE1    audio
+icon              open-iconic   CA0022    audio
+# note              material      558EE1    audio
+play              fontawesome   2B9B1E    play-circle-o
+playlist          material      558EE1    playlist-audio
+playlist-add      material      558EE1    playlist-plus
+tag               fontawesome   558EE1    tag
+update-available  material      F8AC30    cloud-download
+update-ok         material      2B9B1E    cloud-done
+warning           fontawesome   F8AC30    warning

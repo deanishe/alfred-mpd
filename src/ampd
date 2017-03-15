@@ -1,0 +1,313 @@
+#!/usr/bin/python
+# encoding: utf-8
+#
+# Copyright (c) 2017 Dean Jackson <deanishe@deanishe.net>
+#
+# MIT Licence. See http://opensource.org/licenses/MIT
+#
+# Created on 2017-03-13
+#
+
+"""mpd [options] [args]
+
+Usage:
+    mpd search <query>
+    mpd stats
+    mpd status
+    mpd do <action>
+    mpd -h | --help
+    mpd --version
+
+Options:
+    -h, --help      Show this message and exit.
+    --version       Show version number and exit.
+
+Commands:
+    search          Search tracks
+    stats           Show MPD library stats
+    status          Show MPD server status
+    do              Perform workflow action
+
+"""
+
+from __future__ import print_function, absolute_import
+
+import os
+# import subprocess
+import sys
+
+from lib.docopt import docopt
+from lib.workflow import Workflow3
+from lib.workflow.notify import notify
+
+from lib import mpd
+
+log = None
+
+# Initial values for `settings.json`
+DEFAULT_SETTINGS = {}
+
+# Auto-update from GitHub releases
+UPDATE_SETTINGS = {
+    'github_slug': 'deanishe/alfred-mpd',
+}
+
+HELP_URL = u'https://github.com/deanishe/alfred-mpd/issues'
+
+ICON_ALBUM = u'icons/album.png'
+ICON_ARTIST = u'icons/artist.png'
+ICON_ERROR = u'icons/error.png'
+ICON_PLAY = u'icons/play.png'
+ICON_PLAYLIST = u'icons/playlist.png'
+ICON_TRACK = u'icons/track.png'
+ICON_TRACK_QUEUED = u'icons/track-queued.png'
+ICON_TYPE = u'icons/tag.png'
+ICON_UPDATE_AVAILABLE = u'icons/update-available.png'
+ICON_UPDATE_OK = u'icons/update-ok.png'
+ICON_WARNING = u'icons/warning.png'
+ICON_WF = u'icon.png'
+
+
+mpd.MAX_RESULTS = int(os.getenv('MAX_RESULTS') or '100')
+
+
+# currently using a second action in the workflow
+# to re-open the Script Filter
+
+# def _applescriptify(s):
+#     """Make string AppleScript safe."""
+#     return s.replace('"', '" & quot &"')
+
+
+# def recall(query=None):
+#     """Call this Script Filter again with query."""
+#     script = (u'tell application "Alfred 3" to '
+#               u'run trigger "search" in workflow "net.deanishe.alfred.mpd"')
+#     if query:
+#         script += u' with argument "{}"'.format(_applescriptify(query))
+#     cmd = ['/usr/bin/osascript', '-e', script.encode('utf-8')]
+#     subprocess.check_call(cmd)
+
+
+def _track_from_env():
+    """Create an `mpd.Track` from Alfred's envvars."""
+    return mpd.Track(
+        *[wf.decode(os.getenv('ampd_' + k) or '')
+          for k in ('artist', 'album', 'disc', 'track', 'title', 'file')])
+
+
+def do_action(opts):
+    """Perform a workflow action."""
+    query = wf.decode(os.getenv('ampd_query') or '')
+    action = opts.get('<action>')
+    track = _track_from_env()
+
+    log.debug('query=%r, action=%r, track=%r', query, action, track)
+    # parse action
+    for action in action.split('+'):
+        if action == 'queue':
+            log.debug('queuing track ...')
+            mpd.queue_track(track)
+            notify(u'Queued Track',
+                   u'"{t.title}" by {t.artist}'.format(t=track))
+            # recall(query)
+
+        elif action == 'play':
+            log.debug('queuing and playing song ...')
+            # recall(query)
+
+        elif action == 'clear':
+            log.debug('clearing playlist ...')
+            # recall(query)
+
+        elif action == 'queue-album':
+            log.debug('queuing album ...')
+            notify(u'Queued Album',
+                   u'"{t.album}" by {t.artist}'.format(t=track))
+            # recall(query)
+
+        elif action == 'playpause':
+            log.debug('toggling playback ...')
+            mpd.playpause()
+
+        else:
+            msg = u'unknown action: ' + action
+            notify(u'ERROR', msg)
+            raise ValueError(msg)
+
+
+def do_search(opts):
+    """Search MPD and return results to Alfred."""
+    query = opts.get('<query>').strip()
+    if not query:
+        return do_stats(opts)
+
+    try:
+        tracks = mpd.search(query)
+    except mpd.InvalidType as exc:
+        wf.add_item(exc.msg, exc.reason, icon=ICON_ERROR)
+        wf.send_feedback()
+        return
+
+    log.debug(u'%d result(s) for "%s"', len(tracks), query)
+
+    if not tracks:
+        wf.add_item(u'No results', u'Try a different query?',
+                    icon=ICON_WARNING)
+        wf.send_feedback()
+        return
+
+    # pass query to downstream actions to call Alfred again
+    wf.setvar('ampd_query', query)
+
+    # load queue, so we can change the track icon, etc.
+    # if it's already in the queue
+    queued = {t.file for t in mpd.queue()}
+
+    for t in tracks:
+        inq = t.file in queued
+        # TODO: should full and uid be in functions?
+        full = u'{t.artist} - {t.album} - {t.track} - {t.title}'.format(t=t)
+        uid = u'{}-{}-{}-{}'.format(*t).lower()
+
+        icon = ICON_TRACK
+        sub = u'{t.artist} - {t.album}'.format(t=t)
+        action = 'queue'
+
+        if inq:
+            icon = ICON_TRACK_QUEUED
+            action = 'unqueue'
+            sub = u'[queued] ' + sub
+
+        it = wf.add_item(t.title, sub,
+                         autocomplete=u'{} '.format(t.title),
+                         arg=t.file,
+                         uid=uid,
+                         copytext=full,
+                         largetext=full,
+                         valid=True,
+                         icon=icon)
+
+        it.setvar('ampd_artist', t.artist)
+        it.setvar('ampd_album', t.album)
+        it.setvar('ampd_title', t.title)
+        it.setvar('ampd_file', t.file)
+        it.setvar('ampd_action', action)
+        it.setvar('ampd_reopen', 'yes')
+
+        m = it.add_modifier('cmd', u'Play this track')
+        m.setvar('ampd_action', 'play')
+
+        m = it.add_modifier('alt', u'Clear queue & play this track')
+        m.setvar('ampd_action', 'clear+play')
+
+        m = it.add_modifier('ctrl', u'Queue album')
+        m.setvar('ampd_action', 'queue-album')
+
+    wf.send_feedback()
+    return
+
+
+def _plural(s, n, plural=None):
+    """Pluralise string ``s`` based on count ``n``."""
+    if n == 1:
+        return u'{} {}'.format(n, s)
+    if plural:
+        return u'{} {}'.format(n, plural)
+
+    return u'{} {}s'.format(n, s)
+
+
+def do_stats(opts):
+    """Fetch MPD stats and show in Alfred."""
+    st = mpd.stats()
+
+    if not st.songs:  # empty library
+        wf.add_item(u'MPD library empty',
+                    u'Update your library or add some tracks',
+                    icon=ICON_WARNING)
+        wf.send_feedback()
+        return
+
+    ntypes = len(mpd.types())
+    nplaylists = len(mpd.playlists())
+    cur_track = mpd.current()
+    queue = mpd.queue()
+
+    # server host
+    wf.add_item(u'MPD connected to {}:{}'.format(
+                mpd.MPD_HOST, mpd.MPD_PORT))
+
+    # current track
+    if cur_track:
+        log.debug(u'current=%r', cur_track)
+        playing = mpd.playing()
+        name = u'"{t.title}" by {t.artist}'.format(t=cur_track)
+        status = u'Now Playing: ' if playing else u'Paused: '
+        # TODO: show paused/now playing
+        it = wf.add_item(
+            status + name,
+            u'Track {t.track} of "{t.album}"'.format(t=cur_track),
+            arg=cur_track.file,
+            valid=True,
+            icon=ICON_PLAY,
+        )
+        it.setvar('ampd_action', 'playpause')
+        it.setvar('ampd_reopen', 'yes')
+
+    if len(queue):
+        wf.add_item(
+            u'{} in queue'.format(_plural(u'track', len(queue))),
+            valid=False,
+            icon=ICON_PLAYLIST,
+        )
+
+    # artists, albums, etc.
+    # TODO: drill down into artists/albums/playlists etc.
+    wf.add_item(_plural('artist', st.artists), icon=ICON_ARTIST)
+    wf.add_item(_plural('album', st.albums), icon=ICON_ALBUM)
+    wf.add_item(_plural('playlist', nplaylists), icon=ICON_PLAYLIST)
+    wf.add_item(_plural('song', st.songs), icon=ICON_TRACK)
+    # MPD search types
+    wf.add_item(_plural('search type', ntypes), icon=ICON_TYPE)
+
+    wf.send_feedback()
+
+
+def do_status(opts):
+    """Show MPD server status."""
+    s = mpd.status()
+    log.debug('status=%r', s)
+
+
+def main(wf):
+    """Run workflow script."""
+    opts = docopt(__doc__, argv=wf.args, version=wf.version)
+
+    log.debug('opts=%r', opts)
+    log.debug('mpd: host=%s, port=%s', mpd.MPD_HOST, mpd.MPD_PORT)
+
+    try:
+        if opts['search']:
+            return do_search(opts)
+        elif opts['stats']:
+            return do_stats(opts)
+        elif opts['status']:
+            return do_status(opts)
+        elif opts['do']:
+            return do_action(opts)
+
+    except mpd.ConnectionError as err:
+        wf.add_item(err.msg, err.reason, valid=False, icon=ICON_ERROR)
+        wf.send_feedback()
+
+
+if __name__ == '__main__':
+    wf = Workflow3(
+        default_settings=DEFAULT_SETTINGS,
+        # TODO: enable updates
+        # update_settings=UPDATE_SETTINGS,
+        help_url=HELP_URL,
+    )
+    log = wf.logger
+    sys.exit(wf.run(main))

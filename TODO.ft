@@ -1,0 +1,39 @@
+
+Alfred-MPD
+==========
+
+Control an `mpd` server from Alfred.
+
+Search library, queue/unqueue tracks, control playback.
+
+
+Features
+--------
+
+### Outputs.todo ###
+
+View (and manipulate?) audio outputs.
+
+- View outputs
+- Toggle outputs on/off
+
+
+mpd.py
+------
+
+Basic interface to `mdp` via the `mpc` CLI program.
+
+
+### Commands.todo ###
+
+Parts of the core API that haven't been implemented yet.
+
+- play+pause
+- play track
+- queue
+- unqueue
+- clear
+- previous
+- next
+
+
