@@ -132,6 +132,7 @@ for (( i=1; i<${#icons}; i=i+4 )); do
   $verbose && copts+=(-#) || copts+=(-sS)
   $force || ! test -s "$p" && {
     curl $copts -o "$p" "$url"
+    [[ $? -ne 0 ]] && fail "couldn't download $n"
     success "downloaded $n"
     fetched=$(( fetched + 1 ))
   } || {

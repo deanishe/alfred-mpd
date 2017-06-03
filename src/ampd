@@ -67,6 +67,7 @@ ICON_PREVIOUS = u'icons/previous.png'
 ICON_STOP = u'icons/stop.png'
 ICON_TRACK = u'icons/track.png'
 ICON_TRACK_QUEUED = u'icons/track-queued.png'
+ICON_TRACK_CURRENT = u'icons/track-current.png'
 ICON_TYPE = u'icons/tag.png'
 ICON_UPDATE_AVAILABLE = u'icons/update-available.png'
 ICON_UPDATE_OK = u'icons/update-ok.png'
@@ -79,29 +80,72 @@ ICON_WF = u'icon.png'
 mpd.MAX_RESULTS = int(os.getenv('MAX_RESULTS') or '100')
 
 
-# currently using a second action in the workflow
-# to re-open the Script Filter
-
-# def _applescriptify(s):
-#     """Make string AppleScript safe."""
-#     return s.replace('"', '" & quot &"')
-
-
-# def recall(query=None):
-#     """Call this Script Filter again with query."""
-#     script = (u'tell application "Alfred 3" to '
-#               u'run trigger "search" in workflow "net.deanishe.alfred.mpd"')
-#     if query:
-#         script += u' with argument "{}"'.format(_applescriptify(query))
-#     cmd = ['/usr/bin/osascript', '-e', script.encode('utf-8')]
-#     subprocess.check_call(cmd)
-
-
 def _track_from_env():
     """Create an `mpd.Track` from Alfred's envvars."""
     return mpd.Track(
         *[wf.decode(os.getenv('ampd_' + k) or '')
           for k in ('artist', 'album', 'disc', 'track', 'title', 'file')])
+
+
+def _track_keywords(track):
+    """Return filter keywords for track."""
+    return u'{t.title} {t.album} {t.artist}'.format(t=track)
+
+
+def _return_tracks(tracks):
+    """Send list of tracks to Alfred."""
+    # load queue, so we can change the track icon, etc.
+    # if it's already in the queue
+    current = mpd.current()
+    queued = {t.file for t in mpd.queue()}
+
+    for t in tracks:
+        cur = t == current
+        inq = t.file in queued
+        full = u'{t.artist} - {t.album} - {t.track} - {t.title}'.format(t=t)
+        uid = u'{}-{}-{}-{}'.format(*t).lower()
+
+        icon = ICON_TRACK
+        sub = u'{t.artist} - {t.album}'.format(t=t)
+        action = 'queue'
+
+        if cur:
+            icon = ICON_TRACK_CURRENT
+            action = 'remove'
+            sub = u'[playing] ' + sub
+
+        elif inq:
+            icon = ICON_TRACK_QUEUED
+            action = 'remove'
+            sub = u'[queued] ' + sub
+
+        it = wf.add_item(t.title, sub,
+                         autocomplete=u'{} '.format(t.title),
+                         arg=t.file,
+                         uid=uid,
+                         copytext=full,
+                         largetext=full,
+                         valid=True,
+                         icon=icon)
+
+        it.setvar('ampd_artist', t.artist)
+        it.setvar('ampd_album', t.album)
+        it.setvar('ampd_title', t.title)
+        it.setvar('ampd_file', t.file)
+        it.setvar('ampd_action', action)
+        it.setvar('ampd_reopen', 'yes')
+
+        m = it.add_modifier('cmd', u'Play this track')
+        m.setvar('ampd_action', 'play')
+
+        m = it.add_modifier('alt', u'Clear queue & play this track')
+        m.setvar('ampd_action', 'clear+play')
+
+        m = it.add_modifier('ctrl', u'Queue album')
+        m.setvar('ampd_action', 'queue-album')
+
+    wf.send_feedback()
+    return
 
 
 def do_action(opts):
@@ -123,50 +167,62 @@ def do_action(opts):
         'turn-down': mpd.volume_down,
     }
 
-    # parse action
-    for action in action.split('+'):
-        if action in simple_actions:
-            simple_actions[action]()
+    try:
 
-        elif action == 'queue':
-            log.debug('queuing track ...')
-            mpd.queue_track(track)
-            notify(u'Queued Track',
-                   u'"{t.title}" by {t.artist}'.format(t=track))
+        # parse action
+        for action in action.split('+'):
+            if action in simple_actions:
+                simple_actions[action]()
 
-        elif action == 'remove':
-            log.debug('removing track ...')
-            mpd.remove_track(track)
-            notify(u'Removed Track',
-                   u'"{t.title}" by {t.artist}'.format(t=track))
+            elif action == 'play-playlist':
+                pl = wf.decode(os.getenv('ampd_playlist'))
+                log.debug('playing playlist ...')
+                mpd.play_playlist(pl)
+                notify(u'Playing playlist', pl)
 
-        elif action == 'play':  # queue track and play last track in queue
-            log.debug('queuing and playing song ...')
-            for i, t in enumerate(mpd.queue()):
-
-                if t.file == track.file:  # track already in queue
-                    mpd.play(i + 1)
-                    return
-
-            mpd.queue_track(track)
-            mpd.play(len(mpd.queue()))
-
-        elif action == 'queue-album':
-            log.debug('queuing album ...')
-
-            for track in mpd.find(u'album:{}'.format(track.album)):
+            elif action == 'queue':
+                log.debug('queuing track ...')
                 mpd.queue_track(track)
+                notify(u'Queued Track',
+                       u'"{t.title}" by {t.artist}'.format(t=track))
 
-            notify(u'Queued Album',
-                   u'"{t.album}" by {t.artist}'.format(t=track))
+            elif action == 'remove':
+                log.debug('removing track ...')
+                mpd.remove_track(track)
+                notify(u'Removed Track',
+                       u'"{t.title}" by {t.artist}'.format(t=track))
 
-        else:
-            msg = u'unknown action: ' + action
-            notify(u'ERROR', msg)
-            raise ValueError(msg)
+            elif action == 'play':  # queue track and play last track in queue
+                log.debug('queuing and playing song ...')
+                for i, t in enumerate(mpd.queue()):
+
+                    if t.file == track.file:  # track already in queue
+                        mpd.play(i + 1)
+                        return
+
+                mpd.queue_track(track)
+                mpd.play(len(mpd.queue()))
+
+            elif action == 'queue-album':
+                log.debug('queuing album ...')
+
+                for track in mpd.find(u'album:{}'.format(track.album)):
+                    mpd.queue_track(track)
+
+                notify(u'Queued Album',
+                       u'"{t.album}" by {t.artist}'.format(t=track))
+
+            else:
+                msg = u'unknown action: ' + action
+                # notify(u'ERROR', msg)
+                raise ValueError(msg)
+
+    except Exception as err:
+        notify('ERROR', err.reason)
 
 
-Action = namedtuple('Action', 'title subtitle keywords action icon')
+Action = namedtuple('Action',
+                    'title subtitle keywords action icon autocomplete')
 
 
 def search_actions(query):
@@ -180,7 +236,8 @@ def search_actions(query):
             'Start or stop playback',
             'play pause',
             'playpause',
-            ICON_PLAY)
+            ICON_PLAY,
+            None)
     ]
 
     if st.volume > 0:
@@ -190,13 +247,15 @@ def search_actions(query):
                 'Set volume to zero',
                 'volume mute',
                 'mute',
-                ICON_MUTE),
+                ICON_MUTE,
+                None),
             Action(
                 'Volume Down',
                 'Decrease volume to {}%'.format(st.volume - 10),
                 'volume down quiet decrease',
                 'turn-down',
-                ICON_VOLUME_DOWN),
+                ICON_VOLUME_DOWN,
+                None),
         ])
 
     if st.volume < 100:
@@ -206,7 +265,8 @@ def search_actions(query):
                 'Increase volume to {}%'.format(st.volume + 10),
                 'volume up loud increase',
                 'turn-up',
-                ICON_VOLUME_UP)
+                ICON_VOLUME_UP,
+                None)
         )
 
     canprev = cannext = False
@@ -217,7 +277,9 @@ def search_actions(query):
                 'Remove all tracks from the queue',
                 'clear reset',
                 'clear',
-                ICON_CLEAR))
+                ICON_CLEAR,
+                None)
+        )
 
         if st.index > 1:
             canprev = True
@@ -231,7 +293,9 @@ def search_actions(query):
                 'Stop playback',
                 'stop',
                 'stop',
-                ICON_STOP))
+                ICON_STOP,
+                None)
+        )
 
     if canprev:
         actions.append(
@@ -240,7 +304,9 @@ def search_actions(query):
                 'Play previous track',
                 'previous skip',
                 'previous',
-                ICON_PREVIOUS))
+                ICON_PREVIOUS,
+                None)
+        )
 
     if cannext:
         actions.append(
@@ -249,31 +315,213 @@ def search_actions(query):
                 'Play next track',
                 'next skip',
                 'next',
-                ICON_NEXT))
+                ICON_NEXT,
+                None)
+        )
+
+    # subquery actions
+    actions.extend([
+        Action(
+            'Queue',
+            'View queue',
+            'queue',
+            None,
+            ICON_PLAYLIST,
+            'queue > '),
+        Action(
+            'Playlists',
+            'View playlists',
+            'playlists',
+            None,
+            ICON_PLAYLIST,
+            'playlists > '),
+        Action(
+            'Types',
+            'View types (fields you can search on)',
+            'types',
+            None,
+            ICON_TYPE,
+            'types > '),
+        Action(
+            'Artists',
+            'View artists',
+            'artists',
+            None,
+            ICON_ARTIST,
+            'artists > '),
+        Action(
+            'Albums',
+            'View albums',
+            'albums',
+            None,
+            ICON_ARTIST,
+            'albums > '),
+    ])
 
     return wf.filter(query, actions, key=lambda a: a.keywords, min_score=30)
 
 
+def do_search_queue(query, opts):
+    """Show/search queued tracks."""
+    tracks = mpd.queue()
+    if query:
+        tracks = wf.filter(query, tracks, _track_keywords, min_score=30)
+
+    if not tracks:
+        wf.add_item(u'No results', u'Try a different query?',
+                    icon=ICON_WARNING)
+        wf.send_feedback()
+        return
+
+    return _return_tracks(tracks)
+
+
+def do_search_artists(query, opts):
+    """Show/search artists."""
+    artists = mpd.artists(query)
+
+    if not artists:
+        wf.add_item(u'No results', u'Try a different query?',
+                    icon=ICON_WARNING)
+        wf.send_feedback()
+        return
+
+    log.debug('%d artists for %r', len(artists), query)
+
+    for artist in artists:
+        wf.add_item(artist,
+                    '',
+                    autocomplete=u'artist:' + artist,
+                    valid=False,
+                    uid=u'artist.' + artist,
+                    arg=artist,
+                    icon=ICON_ARTIST)
+
+    wf.send_feedback()
+
+
+def do_search_albums(query, opts):
+    """Show/search albums."""
+    albums = mpd.albums(query)
+
+    if not albums:
+        wf.add_item(u'No results', u'Try a different query?',
+                    icon=ICON_WARNING)
+        wf.send_feedback()
+        return
+
+    log.debug('%d albums for %r', len(albums), query)
+
+    for album in albums:
+        wf.add_item(album,
+                    autocomplete=u'album:' + album,
+                    valid=False,
+                    uid=u'album.' + album,
+                    arg=album,
+                    icon=ICON_ALBUM)
+
+    wf.send_feedback()
+
+
+def do_search_playlists(query, opts):
+    """Show/search playlists."""
+    playlists = mpd.playlists()
+
+    if query:
+        playlists = wf.filter(query, playlists, min_score=30)
+
+    if not playlists:
+        wf.add_item(u'No results', u'Try a different query?',
+                    icon=ICON_WARNING)
+        wf.send_feedback()
+        return
+
+    wf.setvar('ampd_action', 'play-playlist')
+    wf.setvar('ampd_reopen', 'yes')
+
+    for pl in playlists:
+        it = wf.add_item(
+            pl,
+            arg=pl,
+            valid=True,
+            uid=u'playlist.' + pl,
+            icon=ICON_PLAYLIST)
+
+        it.setvar('ampd_playlist', pl)
+
+    wf.send_feedback()
+
+
+def do_search_types(query, opts):
+    """Show/search artists."""
+    types = mpd.types()
+
+    if query:
+        types = wf.filter(query, types, min_score=30)
+
+    if not types:
+        wf.add_item(u'No results', u'Try a different query?',
+                    icon=ICON_WARNING)
+        wf.send_feedback()
+        return
+
+    for t in types:
+        wf.add_item(
+            t,
+            arg=t,
+            valid=False,
+            uid=u'type.' + t,
+            autocomplete=t + u':',
+            icon=ICON_TYPE)
+
+    wf.send_feedback()
+
+
 def do_search(opts):
     """Search MPD and return results to Alfred."""
-    query = opts.get('<query>').strip()
+    query = opts.get('<query>').lstrip()
     if not query:
         return do_stats(opts)
 
+    log.info('query=%r', query)
+
+    # pass query to downstream actions to call Alfred again
+    wf.setvar('ampd_query', query)
+
+    subquery_map = {
+        'queue': do_search_queue,
+        'artists': do_search_artists,
+        'albums': do_search_albums,
+        'playlists': do_search_playlists,
+        'types': do_search_types,
+    }
+
+    parts = query.split(' > ', 1)
+    if len(parts) > 1:
+        prefix, query = parts
+        func = subquery_map.get(prefix)
+        if func:
+            log.debug('calling %s search ...', prefix)
+            return func(query.strip(), opts)
+
+    # Normal track search
     actions = search_actions(query)
 
     if actions:
         for a in actions:
+            autocomplete = a.autocomplete if a.autocomplete else a.title
+            uid = a.action if a.action else a.keywords
             it = wf.add_item(
                 a.title,
                 a.subtitle,
-                autocomplete=a.title,
+                autocomplete=autocomplete,
                 arg=a.action,
-                uid='ampd.action.' + a.action,
-                valid=True,
+                uid='ampd.action.' + uid,
+                valid=(a.action is not None),
                 icon=a.icon,
             )
-            it.setvar('ampd_action', a.action)
+            if a.action:
+                it.setvar('ampd_action', a.action)
             it.setvar('ampd_reopen', 'yes')
 
     try:
@@ -290,6 +538,8 @@ def do_search(opts):
                     icon=ICON_WARNING)
         wf.send_feedback()
         return
+
+    return _return_tracks(tracks)
 
     # pass query to downstream actions to call Alfred again
     wf.setvar('ampd_query', query)
@@ -391,17 +641,26 @@ def do_stats(opts):
         wf.add_item(
             u'{} in queue'.format(_plural(u'track', len(queue))),
             valid=False,
+            autocomplete='queue > ',
             icon=ICON_PLAYLIST,
         )
 
     # artists, albums, etc.
     # TODO: drill down into artists/albums/playlists etc.
-    wf.add_item(_plural('artist', st.artists), icon=ICON_ARTIST)
-    wf.add_item(_plural('album', st.albums), icon=ICON_ALBUM)
-    wf.add_item(_plural('playlist', nplaylists), icon=ICON_PLAYLIST)
+    wf.add_item(_plural('artist', st.artists),
+                autocomplete='artists > ',
+                icon=ICON_ARTIST)
+    wf.add_item(_plural('album', st.albums),
+                autocomplete='albums > ',
+                icon=ICON_ALBUM)
+    wf.add_item(_plural('playlist', nplaylists),
+                autocomplete='playlists > ',
+                icon=ICON_PLAYLIST)
     wf.add_item(_plural('song', st.songs), icon=ICON_TRACK)
     # MPD search types
-    wf.add_item(_plural('search type', ntypes), icon=ICON_TYPE)
+    wf.add_item(_plural('search type', ntypes),
+                autocomplete='types > ',
+                icon=ICON_TYPE)
 
     wf.send_feedback()
 
@@ -437,8 +696,7 @@ def main(wf):
 if __name__ == '__main__':
     wf = Workflow3(
         default_settings=DEFAULT_SETTINGS,
-        # TODO: enable updates
-        # update_settings=UPDATE_SETTINGS,
+        update_settings=UPDATE_SETTINGS,
         help_url=HELP_URL,
     )
     log = wf.logger

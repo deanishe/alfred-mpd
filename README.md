@@ -3,20 +3,22 @@ Alfred MPD
 
 Control MPD from [Alfred][alfred].
 
+![][screenshot]
+
 
 Usage
 -----
 
-- `keyword` — What gets shown…
-    - `↩` or `⌘+<NUM>` — Action description…
-        - `⌘+↩` — Alternate action description…
-        - `⌥+↩` — Alternate action description…
-        - `^+↩` — Alternate action description…
-        - `⇧+↩` — Alternate action description…
-        - `fn+↩` — Alternate action description…
-    - `⇥` — Expansion description…
-    - `⌘+C` — What gets copied…
-    - `⌘+L` — What gets shown large…
+- `mpd [<query>]` — View mpd status and search for tracks
+    - On actions:
+        - `↩` or `⌘+<NUM>` — Perform action
+    - On tracks:
+        - `↩` or `⌘+<NUM>` — Queue track
+        - `⌘+↩` — Play track
+        - `⌥+↩` — Clear queue and play track
+        - `^+↩` — Queue album
+    - On albums/artists/playlists/types:
+        - `↩`, `⇥` or `⌘+<NUM>` — Search within albums/artists/playlists/types
 
 
 Licencing, thanks
@@ -38,3 +40,4 @@ Changelog
 [mit]: ./src/LICENCE.txt
 [aw]: http://www.deanishe.net/alfred-workflow/
 [alfred]: https://alfredapp.com
+[screenshot]: ./screenshot.png

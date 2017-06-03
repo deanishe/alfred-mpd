@@ -8,12 +8,11 @@
 # Created on 2017-03-13
 #
 
-"""
-"""
+"""Wrapper around the `mpc` command-line client for `mpd`."""
 
 from __future__ import print_function, absolute_import
 
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 import logging
 import os
 import re
@@ -313,6 +312,50 @@ def _parse_status(out):
     return Status(cur, mode == 'playing', pos, count, volume)
 
 
+def artists(query=None):
+    """List/search artists."""
+    artists = OrderedDict()
+    if query:
+        out = mpc('search',
+                  ['artist', query],
+                  ('-f', '%artist%')).strip()
+    else:
+        out = mpc('list', ['artist']).strip()
+
+    if not out:
+        return []
+
+    results = out.split('\n')
+
+    log.debug('results=%r', results)
+    for name in results:
+            artists[name] = True
+
+    return artists.keys()
+
+
+def albums(query=None):
+    """List/search all artists."""
+    albums = OrderedDict()
+    if query:
+        out = mpc('search',
+                  ['album', query],
+                  ('-f', '%album%')).strip()
+    else:
+        out = mpc('list', ['album']).strip()
+
+    if not out:
+        return []
+
+    results = out.split('\n')
+
+    log.debug('results=%r', results)
+    for name in results:
+            albums[name] = True
+
+    return albums.keys()
+
+
 def status():
     """Retrieve MPD status inc. playing/paused and volume."""
     out = mpc('status', opts=('--format', RESULT_FORMAT))
@@ -363,6 +406,11 @@ def play(index=None):
     out = mpc('play', args)
     log.info('playback started')
     return _parse_status(out)
+
+
+def play_playlist(name):
+    """Play a playlist."""
+    mpc('load', [name])
 
 
 def stop():
@@ -424,12 +472,3 @@ def volume_up():
 def volume_down():
     """Decrease volume."""
     return _setvol('-10')
-
-
-# TODO: play+pause
-# TODO: play track (use queue, or add then play)
-# TODO: queue
-# TODO: unqueue
-# TODO: queue album
-
-# TODO: outputs

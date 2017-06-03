@@ -21,7 +21,8 @@ artist            material      F8AC30    face
 # track              fontawesome   AF49FE    track-audio-o
 track              material      AF49FE    audio
 track-queued       material      558EE1    audio
-# note              material      558EE1    audio
+track-current      material      CA0022    audio
+# note             material      558EE1    audio
 
 playlist          material      558EE1    playlist-audio
 tag               fontawesome   558EE1    tag
