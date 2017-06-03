@@ -19,11 +19,76 @@
 				<false/>
 			</dict>
 		</array>
+		<key>10CB8166-9ADD-4C16-B14D-83EEA164C7B8</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0A1E5C6A-8CC1-4A87-AFD3-09B5E1573B83</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>12D73DC7-F6D3-49B1-9493-31C60B686F4C</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>8E96C96A-769D-4D2A-B347-CF6659CC00FD</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>1A92B7E2-AEC4-4E37-9977-53BD7C1A3D1B</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8E96C96A-769D-4D2A-B347-CF6659CC00FD</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>2CCC5CB3-9D47-433A-9B11-971AA2F22757</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>FD19AC19-7AAB-43D5-A2CC-3ECCD3D1D5B0</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>34654C73-10FB-4270-832B-45D4A47F9E1C</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>3244F1C2-93B3-4B26-B394-CF0840764737</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>39C68606-8645-4B11-869B-A53333528D21</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>06E6228A-F221-4D61-9BDF-175974E569EA</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -47,6 +112,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>105B9F08-8034-4E8B-AC51-DAC1967EC61B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>8B187878-519C-45CC-963D-281936064111</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>9AA5963E-578F-44A9-960E-725407882D64</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -81,6 +159,32 @@
 				<false/>
 			</dict>
 		</array>
+		<key>A7C6520C-8606-4207-AE3B-0F47454337D5</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>E8326030-3B69-4BF4-8215-87478C875053</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>D96E76B3-650E-495B-9257-7CFA90628026</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>BB4FAB93-47AD-4483-B735-87C59A94BCBC</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 	</dict>
 	<key>createdby</key>
 	<string>Dean Jackson</string>
@@ -95,21 +199,41 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>triggerid</key>
-				<string>search</string>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>35</integer>
+				<key>hotmod</key>
+				<integer>1835008</integer>
+				<key>hotstring</key>
+				<string>P</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.trigger.external</string>
+			<string>alfred.workflow.trigger.hotkey</string>
 			<key>uid</key>
-			<string>12D73DC7-F6D3-49B1-9493-31C60B686F4C</string>
+			<string>1A92B7E2-AEC4-4E37-9977-53BD7C1A3D1B</string>
 			<key>version</key>
-			<integer>1</integer>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
 				<key>argumenttype</key>
 				<integer>1</integer>
 				<key>escaping</key>
@@ -196,6 +320,19 @@ vars={allvars}
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>triggerid</key>
+				<string>search</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>12D73DC7-F6D3-49B1-9493-31C60B686F4C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>externaltriggerid</key>
 				<string>search</string>
 				<key>passinputasargument</key>
@@ -209,21 +346,6 @@ vars={allvars}
 			<string>alfred.workflow.output.callexternaltrigger</string>
 			<key>uid</key>
 			<string>461327B9-3E76-4045-9A9A-A45FA218E92A</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argument</key>
-				<string>{var:ampd_query}</string>
-				<key>variables</key>
-				<dict/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.argument</string>
-			<key>uid</key>
-			<string>9F255903-7F5C-4893-835C-3AF74124A0D4</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -246,6 +368,329 @@ vars={allvars}
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>{var:ampd_query}</string>
+				<key>variables</key>
+				<dict/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>9F255903-7F5C-4893-835C-3AF74124A0D4</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>./ampd do next</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>E8326030-3B69-4BF4-8215-87478C875053</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>triggerid</key>
+				<string>playpause</string>
+				<key>triggername</key>
+				<string>Play/Pause</string>
+				<key>workflowonly</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.remote</string>
+			<key>uid</key>
+			<string>34654C73-10FB-4270-832B-45D4A47F9E1C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>triggerid</key>
+				<string>next</string>
+				<key>triggername</key>
+				<string>Next</string>
+				<key>workflowonly</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.remote</string>
+			<key>uid</key>
+			<string>A7C6520C-8606-4207-AE3B-0F47454337D5</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>triggerid</key>
+				<string>clear</string>
+				<key>triggername</key>
+				<string>Clear</string>
+				<key>workflowonly</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.remote</string>
+			<key>uid</key>
+			<string>2CCC5CB3-9D47-433A-9B11-971AA2F22757</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>./ampd do playpause</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>3244F1C2-93B3-4B26-B394-CF0840764737</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>./ampd do clear</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>FD19AC19-7AAB-43D5-A2CC-3ECCD3D1D5B0</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>./ampd do stop</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>0A1E5C6A-8CC1-4A87-AFD3-09B5E1573B83</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>triggerid</key>
+				<string>turn-up</string>
+				<key>triggername</key>
+				<string>Vol+</string>
+				<key>workflowonly</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.remote</string>
+			<key>uid</key>
+			<string>D96E76B3-650E-495B-9257-7CFA90628026</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>./ampd do turn-up</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>BB4FAB93-47AD-4483-B735-87C59A94BCBC</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>triggerid</key>
+				<string>stop</string>
+				<key>triggername</key>
+				<string>Stop</string>
+				<key>workflowonly</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.remote</string>
+			<key>uid</key>
+			<string>10CB8166-9ADD-4C16-B14D-83EEA164C7B8</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>./ampd do previous</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>06E6228A-F221-4D61-9BDF-175974E569EA</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>triggerid</key>
+				<string>turn-down</string>
+				<key>triggername</key>
+				<string>Vol-</string>
+				<key>workflowonly</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.remote</string>
+			<key>uid</key>
+			<string>8B187878-519C-45CC-963D-281936064111</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>triggerid</key>
+				<string>previous</string>
+				<key>triggername</key>
+				<string>Previous</string>
+				<key>workflowonly</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.remote</string>
+			<key>uid</key>
+			<string>39C68606-8645-4B11-869B-A53333528D21</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>./ampd do turn-down</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>9AA5963E-578F-44A9-960E-725407882D64</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>Music Player Daemon
@@ -254,64 +699,211 @@ vars={allvars}
 Search &amp; control an mpd server from Alfred.</string>
 	<key>uidata</key>
 	<dict>
+		<key>06E6228A-F221-4D61-9BDF-175974E569EA</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>xpos</key>
+			<integer>200</integer>
+			<key>ypos</key>
+			<integer>630</integer>
+		</dict>
+		<key>0A1E5C6A-8CC1-4A87-AFD3-09B5E1573B83</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>xpos</key>
+			<integer>200</integer>
+			<key>ypos</key>
+			<integer>490</integer>
+		</dict>
 		<key>105B9F08-8034-4E8B-AC51-DAC1967EC61B</key>
 		<dict>
+			<key>colorindex</key>
+			<integer>9</integer>
 			<key>note</key>
 			<string>ampd_reopen = yes</string>
 			<key>xpos</key>
-			<integer>540</integer>
+			<integer>620</integer>
 			<key>ypos</key>
-			<integer>250</integer>
+			<integer>210</integer>
+		</dict>
+		<key>10CB8166-9ADD-4C16-B14D-83EEA164C7B8</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>xpos</key>
+			<integer>40</integer>
+			<key>ypos</key>
+			<integer>490</integer>
 		</dict>
 		<key>12D73DC7-F6D3-49B1-9493-31C60B686F4C</key>
 		<dict>
+			<key>colorindex</key>
+			<integer>9</integer>
+			<key>xpos</key>
+			<integer>40</integer>
+			<key>ypos</key>
+			<integer>180</integer>
+		</dict>
+		<key>1A92B7E2-AEC4-4E37-9977-53BD7C1A3D1B</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>7</integer>
 			<key>xpos</key>
 			<integer>40</integer>
 			<key>ypos</key>
 			<integer>40</integer>
+		</dict>
+		<key>2CCC5CB3-9D47-433A-9B11-971AA2F22757</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>xpos</key>
+			<integer>700</integer>
+			<key>ypos</key>
+			<integer>350</integer>
+		</dict>
+		<key>3244F1C2-93B3-4B26-B394-CF0840764737</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>xpos</key>
+			<integer>200</integer>
+			<key>ypos</key>
+			<integer>350</integer>
+		</dict>
+		<key>34654C73-10FB-4270-832B-45D4A47F9E1C</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>xpos</key>
+			<integer>40</integer>
+			<key>ypos</key>
+			<integer>350</integer>
+		</dict>
+		<key>39C68606-8645-4B11-869B-A53333528D21</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>xpos</key>
+			<integer>40</integer>
+			<key>ypos</key>
+			<integer>630</integer>
 		</dict>
 		<key>461327B9-3E76-4045-9A9A-A45FA218E92A</key>
 		<dict>
+			<key>colorindex</key>
+			<integer>9</integer>
 			<key>note</key>
 			<string>Re-open workflow with same query</string>
 			<key>xpos</key>
-			<integer>780</integer>
+			<integer>860</integer>
 			<key>ypos</key>
-			<integer>220</integer>
+			<integer>180</integer>
 		</dict>
 		<key>49CF28DC-A40C-4D16-9ACD-33CA0A13BB70</key>
 		<dict>
+			<key>colorindex</key>
+			<integer>7</integer>
 			<key>note</key>
 			<string>Perform track/album action</string>
 			<key>xpos</key>
-			<integer>780</integer>
+			<integer>600</integer>
 			<key>ypos</key>
 			<integer>40</integer>
 		</dict>
 		<key>76AB8666-2A4B-4813-AB2C-EB31DE7EA8C7</key>
 		<dict>
 			<key>xpos</key>
-			<integer>410</integer>
+			<integer>470</integer>
 			<key>ypos</key>
 			<integer>70</integer>
 		</dict>
+		<key>8B187878-519C-45CC-963D-281936064111</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>xpos</key>
+			<integer>370</integer>
+			<key>ypos</key>
+			<integer>630</integer>
+		</dict>
 		<key>8E96C96A-769D-4D2A-B347-CF6659CC00FD</key>
 		<dict>
+			<key>colorindex</key>
+			<integer>7</integer>
 			<key>note</key>
 			<string>Search MPD music library</string>
 			<key>xpos</key>
-			<integer>220</integer>
+			<integer>280</integer>
 			<key>ypos</key>
 			<integer>40</integer>
 		</dict>
+		<key>9AA5963E-578F-44A9-960E-725407882D64</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>xpos</key>
+			<integer>530</integer>
+			<key>ypos</key>
+			<integer>630</integer>
+		</dict>
 		<key>9F255903-7F5C-4893-835C-3AF74124A0D4</key>
 		<dict>
+			<key>colorindex</key>
+			<integer>9</integer>
 			<key>note</key>
 			<string>Set {query} from envvar</string>
 			<key>xpos</key>
-			<integer>670</integer>
+			<integer>750</integer>
 			<key>ypos</key>
-			<integer>250</integer>
+			<integer>210</integer>
+		</dict>
+		<key>A7C6520C-8606-4207-AE3B-0F47454337D5</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>xpos</key>
+			<integer>370</integer>
+			<key>ypos</key>
+			<integer>350</integer>
+		</dict>
+		<key>BB4FAB93-47AD-4483-B735-87C59A94BCBC</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>xpos</key>
+			<integer>530</integer>
+			<key>ypos</key>
+			<integer>490</integer>
+		</dict>
+		<key>D96E76B3-650E-495B-9257-7CFA90628026</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>xpos</key>
+			<integer>370</integer>
+			<key>ypos</key>
+			<integer>490</integer>
+		</dict>
+		<key>E8326030-3B69-4BF4-8215-87478C875053</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>xpos</key>
+			<integer>530</integer>
+			<key>ypos</key>
+			<integer>350</integer>
+		</dict>
+		<key>FD19AC19-7AAB-43D5-A2CC-3ECCD3D1D5B0</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>xpos</key>
+			<integer>860</integer>
+			<key>ypos</key>
+			<integer>350</integer>
 		</dict>
 	</dict>
 	<key>variables</key>
@@ -328,7 +920,7 @@ Search &amp; control an mpd server from Alfred.</string>
 		<string>6600</string>
 	</dict>
 	<key>version</key>
-	<string>0.1.0-alpha</string>
+	<string>0.1.0</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

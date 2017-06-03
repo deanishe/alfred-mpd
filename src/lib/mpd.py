@@ -93,7 +93,7 @@ class InvalidType(MPDError):
 
 # Data models returned by this module
 Stats = namedtuple('Stats', 'artists albums songs')
-Status = namedtuple('Status', 'track playing index total')
+Status = namedtuple('Status', 'track playing index total volume')
 Track = namedtuple('Track', 'artist album disc track title file')
 
 
@@ -130,14 +130,15 @@ def _parse_track_list(out):
 
 def mpc(command, args=None, opts=None):
     """Execute ``mpc`` and return output."""
+    command = _stringify(command)
     args = [_stringify(s) for s in args or []]
     opts = [_stringify(s) for s in opts or []]
     cmd = [MPC, '--host', MPD_HOST, '--port', MPD_PORT] \
         + opts \
-        + [_stringify(command)] \
+        + [command] \
         + args
 
-    log.debug('cmd=%r', cmd)
+    log.debug('mpc command: %s', [command] + args)
 
     start = time.time()
 
@@ -180,31 +181,12 @@ def mpctracks(command, args=None):
     return _parse_track_list(out)
 
 
-def current():
-    """Fetch current track."""
-    tracks = mpctracks('current')
-    if not tracks:
-        return None
-
-    return tracks[0]
-
-
 def version():
     """Fetch MPD API version."""
     # sample output:
     # mpd version: 0.20.0
     s = mpc('version')
     return s.split(':')[-1].strip()
-
-
-def queue():
-    """Retrieve tracks in queue."""
-    return mpctracks('playlist')
-
-
-def playing():
-    """Retrieve playback status."""
-    return status().playing
 
 
 def playlists():
@@ -226,13 +208,23 @@ def _parse_query(query):
 
     args = []
     typ = None
+    q = u''
     for t, w in pairs:
         if t:
+            if q:
+                args.append(q)
+                q = u''
+
             args.append(t)
+            typ = t
+
         elif not typ:
             args.append('any')
             typ = 'any'
-        args.append(w)
+
+        q = u'{} {}'.format(q, w).strip()
+        # args.append(w)
+    args.append(q)
 
     log.debug('query=%r, mpc=%r', query, args)
     return args
@@ -281,43 +273,157 @@ def stats():
     return Stats(artists, albums, songs)
 
 
-def status():
-    """Retrieve MPD status inc. playing/paused and volume."""
-    out = mpc('status', opts=('-f', RESULT_FORMAT))
+_match_playback_status = re.compile(r"""
+    \[([a-z]+)\]\s+         # playback status
+    \#(\d+)/(\d+)\s+        # playlist position
+    .+
+    \((\d+)%\)              # progress
+    .*                      # anything else
+    """, re.VERBOSE).match
+
+_find_playback_settings = re.compile(r'(\w+): ([0-9%ofn]+)').findall
+
+
+def _parse_status(out):
+    """Parse ``mpc`` status response returned by many commands."""
+    mode = 'stopped'
+    pos = count = pc = volume = 0
+    cur = None
+
     for i, line in enumerate(out.splitlines()):
-        log.debug(u'status %d: %s', i, line)
-        m = re.match(r"""
-            \[([a-z]+)\]\s+         # playback status
-            \#(\d+)/(\d+)\s+        # playlist position
-            .+
-            \((\d+)%\)              # progress
-            .*                      # anything else
-            """, line, re.VERBOSE)
-        if m:
+        log.debug('status: %r', line)
+
+        m = _match_playback_status(line)
+        if m:  # playback status
             mode, pos, count, pc = m.groups()
             pos, count, pc = [int(s) for s in (pos, count, pc)]
             log.debug('mode=%r, pos=%r, count=%r, pc=%r', mode, pos, count, pc)
-        elif i == 0:  # assume title of current track
-            t = _parse_track_list(line)
-            log.debug('current track=%r', t)
 
-    cur = current()
-    return Status(cur, mode == 'playing', pos, count)
+        elif line.startswith('volume'):  # playback settings
+            for k, v in _find_playback_settings(line):
+                if k == 'volume':
+                    volume = int(v.rstrip('%'))
+                    log.debug('volume=%r', volume)
+
+        elif DELIMITER in line:  # current track
+            # log.debug('current track: %r', line)
+            cur = _parse_track_list(line)[0]
+            log.debug('current track=%r', cur)
+
+    return Status(cur, mode == 'playing', pos, count, volume)
+
+
+def status():
+    """Retrieve MPD status inc. playing/paused and volume."""
+    out = mpc('status', opts=('--format', RESULT_FORMAT))
+    return _parse_status(out)
+
+
+def queue():
+    """Retrieve tracks in queue."""
+    return mpctracks('playlist')
+
+
+def clear():
+    """Clear queue."""
+    mpc('clear')
+
+
+def current():
+    """Fetch current track."""
+    tracks = mpctracks('current')
+    if not tracks:
+        return None
+
+    return tracks[0]
+
+
+def playing():
+    """Retrieve playback status."""
+    return status().playing
 
 
 def playpause():
     """Start/stop playback."""
     if playing():
         mpc('pause')
+        log.info('playback paused')
     else:
         # TODO: check if there are tracks to play?
+        c = current()
+        q = queue()
+        log.debug('current=%r, %d tracks in queue', c, len(q))
         mpc('play')
+        log.info('playback started')
+
+
+def play(index=None):
+    """Start playback."""
+    args = [index] if index else []
+    out = mpc('play', args)
+    log.info('playback started')
+    return _parse_status(out)
+
+
+def stop():
+    """Stop playback."""
+    out = mpc('stop')
+    log.info('playback stopped')
+    return _parse_status(out)
 
 
 def queue_track(track):
     """Add a `Track` to the queue."""
-    out = mpc('add', (track.file,))
+    mpc('add', (track.file,))
+    log.info('track queued: %s', track.file)
+
+
+def remove_track(track):
+    """Remove a `Track` from the queue."""
+    idx = 0
+    for i, t in enumerate(queue()):
+        idx += 1
+        if t.file == track.file:
+            mpc('del', (idx,))
+            idx -= 1
+            log.info('track removed: %s', track.file)
+
+
+def skip_next():
+    """Go to next track."""
+    out = mpc('next')
     log.debug('out=%r', out)
+    log.info('skipped to next track')
+
+
+def skip_previous():
+    """Go to previous track."""
+    out = mpc('prev')
+    log.debug('out=%r', out)
+    log.info('skipped to previous track')
+
+
+def _setvol(v):
+    """Set volume to ``v``."""
+    out = mpc('volume', (v,))
+    st = _parse_status(out)
+    log.info('volume set to %d%%', st.volume)
+    return st
+
+
+def mute():
+    """Set volume to 0."""
+    return _setvol('0')
+
+
+def volume_up():
+    """Increase volume."""
+    return _setvol('+10')
+
+
+def volume_down():
+    """Decrease volume."""
+    return _setvol('-10')
 
 
 # TODO: play+pause
@@ -325,8 +431,5 @@ def queue_track(track):
 # TODO: queue
 # TODO: unqueue
 # TODO: queue album
-# TODO: clear
-# TODO: previous
-# TODO: next
 
 # TODO: outputs

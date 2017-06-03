@@ -5,19 +5,38 @@
 #
 # filename        font name     colour   icon name
 
-album             material      2B9B1E    album
-album-alt         material      558EE1    collection-music
-artist            material      F8AC30    face
+# Workflow stuff
 error             elusive       CA0022    error-alt
+warning           fontawesome   F8AC30    warning
+icon              open-iconic   CA0022    audio
+update-available  material      F8AC30    cloud-download
+update-ok         material      2B9B1E    cloud-done
+
+# Results
+
+album             material      2B9B1E    album
+# album-alt         material      558EE1    collection-music
+artist            material      F8AC30    face
+
 # track              fontawesome   AF49FE    track-audio-o
 track              material      AF49FE    audio
 track-queued       material      558EE1    audio
-icon              open-iconic   CA0022    audio
 # note              material      558EE1    audio
-play              fontawesome   2B9B1E    play-circle-o
+
 playlist          material      558EE1    playlist-audio
-playlist-add      material      558EE1    playlist-plus
 tag               fontawesome   558EE1    tag
-update-available  material      F8AC30    cloud-download
-update-ok         material      2B9B1E    cloud-done
-warning           fontawesome   F8AC30    warning
+
+
+# Controls
+
+play              fontawesome   2B9B1E    play-circle-o
+stop              material      CA0022    stop
+next              material      558EE1    skip-next
+previous          material      F8AC30    skip-previous
+
+volume-up         fontawesome   F8AC30    volume-up
+volume-down       fontawesome   558EE1    volume-down
+volume-off        fontawesome   CA0022    volume-off
+
+playlist-add      material      558EE1    playlist-plus
+playlist-clear    material      CA0022    delete
