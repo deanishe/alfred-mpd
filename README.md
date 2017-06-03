@@ -6,6 +6,12 @@ Control MPD from [Alfred][alfred].
 ![][screenshot]
 
 
+Installation
+------------
+
+Download the latest version from [GitHub releases][gh-releases].
+
+
 Usage
 -----
 
@@ -41,3 +47,5 @@ Changelog
 [aw]: http://www.deanishe.net/alfred-workflow/
 [alfred]: https://alfredapp.com
 [screenshot]: ./screenshot.png
+[gh-releases]: https://github.com/deanishe/alfred-mpd/releases/latest
+
