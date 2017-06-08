@@ -34,6 +34,8 @@ This workflow is released under the [MIT licence][mit].
 
 It is based on the [Alfred-Workflow][aw] library, which is also released under the [MIT licence][mit].
 
+The icons are from [Elusive Icons][elusive], [Font Awesome][awesome] and [Material Design][material].
+
 
 Changelog
 ---------
@@ -42,10 +44,17 @@ Changelog
 
 - First release
 
+### 0.1.1 ###
+
+- Fix broken build
+
 
 [mit]: ./src/LICENCE.txt
 [aw]: http://www.deanishe.net/alfred-workflow/
 [alfred]: https://alfredapp.com
 [screenshot]: ./screenshot.png
 [gh-releases]: https://github.com/deanishe/alfred-mpd/releases/latest
+[elusive]: https://github.com/aristath/elusive-iconfont
+[awesome]: http://fortawesome.github.io/Font-Awesome/
+[material]: http://zavoloklom.github.io/material-design-iconic-font/
 
