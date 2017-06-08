@@ -240,34 +240,35 @@ def search_actions(query):
             None)
     ]
 
-    if st.volume > 0:
-        actions.extend([
-            Action(
-                'Mute Volume',
-                'Set volume to zero',
-                'volume mute',
-                'mute',
-                ICON_MUTE,
-                None),
-            Action(
-                'Volume Down',
-                'Decrease volume to {}%'.format(st.volume - 10),
-                'volume down quiet decrease',
-                'turn-down',
-                ICON_VOLUME_DOWN,
-                None),
-        ])
+    if st.volume != 'n/a':  # volume not available for Digital Out
+        if st.volume > 0:
+            actions.extend([
+                Action(
+                    'Mute Volume',
+                    'Set volume to zero',
+                    'volume mute',
+                    'mute',
+                    ICON_MUTE,
+                    None),
+                Action(
+                    'Volume Down',
+                    'Decrease volume to {}%'.format(st.volume - 10),
+                    'volume down quiet decrease',
+                    'turn-down',
+                    ICON_VOLUME_DOWN,
+                    None),
+            ])
 
-    if st.volume < 100:
-        actions.append(
-            Action(
-                'Volume Up',
-                'Increase volume to {}%'.format(st.volume + 10),
-                'volume up loud increase',
-                'turn-up',
-                ICON_VOLUME_UP,
-                None)
-        )
+        if st.volume < 100:
+            actions.append(
+                Action(
+                    'Volume Up',
+                    'Increase volume to {}%'.format(st.volume + 10),
+                    'volume up loud increase',
+                    'turn-up',
+                    ICON_VOLUME_UP,
+                    None)
+            )
 
     canprev = cannext = False
     if len(queue):
@@ -603,6 +604,13 @@ def _plural(s, n, plural=None):
 
 def do_stats(opts):
     """Fetch MPD stats and show in Alfred."""
+    if wf.update_available:
+        wf.add_item('A workflow update is available',
+                    u'↩ or ⇥ to install',
+                    valid=False,
+                    autocomplete='workflow:update',
+                    icon=ICON_UPDATE_AVAILABLE)
+
     st = mpd.stats()
 
     if not st.songs:  # empty library

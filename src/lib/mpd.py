@@ -280,7 +280,7 @@ _match_playback_status = re.compile(r"""
     .*                      # anything else
     """, re.VERBOSE).match
 
-_find_playback_settings = re.compile(r'(\w+): ([0-9%ofn]+)').findall
+_find_playback_settings = re.compile(r'(\w+): ?([0-9%ofn/a]+)').findall
 
 
 def _parse_status(out):
@@ -301,7 +301,10 @@ def _parse_status(out):
         elif line.startswith('volume'):  # playback settings
             for k, v in _find_playback_settings(line):
                 if k == 'volume':
-                    volume = int(v.rstrip('%'))
+                    if v.strip() == 'n/a':  # digital output
+                        volume = 'n/a'
+                    else:
+                        volume = int(v.rstrip('%'))
                     log.debug('volume=%r', volume)
 
         elif DELIMITER in line:  # current track
