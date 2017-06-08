@@ -48,6 +48,10 @@ Changelog
 
 - Fix broken build
 
+### 0.1.2 ###
+
+- Handle volume unavailable (hardware mixer)
+
 
 [mit]: ./src/LICENCE.txt
 [aw]: http://www.deanishe.net/alfred-workflow/
