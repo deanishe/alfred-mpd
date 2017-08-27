@@ -706,6 +706,7 @@ if __name__ == '__main__':
         default_settings=DEFAULT_SETTINGS,
         update_settings=UPDATE_SETTINGS,
         help_url=HELP_URL,
+        normalization='NFD',
     )
     log = wf.logger
     sys.exit(wf.run(main))
