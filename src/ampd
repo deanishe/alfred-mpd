@@ -69,6 +69,7 @@ ICON_TRACK = u'icons/track.png'
 ICON_TRACK_QUEUED = u'icons/track-queued.png'
 ICON_TRACK_CURRENT = u'icons/track-current.png'
 ICON_TYPE = u'icons/tag.png'
+ICON_UPDATE = u'icons/update.png'
 ICON_UPDATE_AVAILABLE = u'icons/update-available.png'
 ICON_UPDATE_OK = u'icons/update-ok.png'
 ICON_VOLUME_UP = u'icons/volume-up.png'
@@ -165,6 +166,7 @@ def do_action(opts):
         'stop': mpd.stop,
         'turn-up': mpd.volume_up,
         'turn-down': mpd.volume_down,
+        'update': mpd.update,
     }
 
     try:
@@ -237,6 +239,13 @@ def search_actions(query):
             'play pause',
             'playpause',
             ICON_PLAY,
+            None),
+        Action(
+            'Update library',
+            'Rescan media dir(s) for changes',
+            'update refresh',
+            'update',
+            ICON_UPDATE,
             None)
     ]
 
