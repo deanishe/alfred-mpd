@@ -19,24 +19,24 @@ album             material      2B9B1E    album
 artist            material      F8AC30    face
 
 # track              fontawesome   AF49FE    track-audio-o
-track              material      AF49FE    audio
-track-queued       material      558EE1    audio
+track              material      558EE1    audio
+track-queued       material      AF49FE    audio
 track-current      material      CA0022    audio
 # note             material      558EE1    audio
 
-playlist          material      558EE1    playlist-audio
-tag               fontawesome   558EE1    tag
+playlist          material      AF49FE    playlist-audio
+tag               fontawesome   2B9B1E    tag
 
 
 # Controls
 
 play              fontawesome   2B9B1E    play-circle-o
 stop              material      CA0022    stop
-next              material      558EE1    skip-next
+next              material      AF49FE    skip-next
 previous          material      F8AC30    skip-previous
 
 volume-up         fontawesome   F8AC30    volume-up
-volume-down       fontawesome   558EE1    volume-down
+volume-down       fontawesome   AF49FE    volume-down
 volume-off        fontawesome   CA0022    volume-off
 
 playlist-add      material      558EE1    playlist-plus

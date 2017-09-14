@@ -7,6 +7,25 @@ Control an `mpd` server from Alfred.
 Search library, queue/unqueue tracks, control playback.
 
 
+General.todo
+------------
+
+- Set specific volume (e.g. volume 100)
+- Add "other actions…" option
+    - Queue whole album
+    - Browse artist
+    - Browse album
+- Better handling of browsing albums:
+  `album:name of album` means you have to enter `track:...` to further filter. Expand query to `album:name of album any:`?
+- Change query delimiter and implement "no trailing space backs up"
+
+Bugs.todo
+---------
+
+- Escape colons in track/album names
+  Better to make browsing an album a separate action?
+
+
 Features
 --------
 
@@ -27,13 +46,4 @@ Basic interface to `mdp` via the `mpc` CLI program.
 ### Commands.todo ###
 
 Parts of the core API that haven't been implemented yet.
-
-- play+pause
-- play track
-- queue
-- unqueue
-- clear
-- previous
-- next
-
 

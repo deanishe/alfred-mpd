@@ -301,7 +301,7 @@ def _parse_status(out):
         elif line.startswith('volume'):  # playback settings
             for k, v in _find_playback_settings(line):
                 if k == 'volume':
-                    if v.strip() == 'n/a':  # digital output
+                    if v.strip() == 'n/a':  # hardware decoder
                         volume = 'n/a'
                     else:
                         volume = int(v.rstrip('%'))
