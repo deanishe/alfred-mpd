@@ -34,6 +34,7 @@ play              fontawesome   2B9B1E    play-circle-o
 stop              material      CA0022    stop
 next              material      AF49FE    skip-next
 previous          material      F8AC30    skip-previous
+update            fontawesome   F8AC30    refresh
 
 volume-up         fontawesome   F8AC30    volume-up
 volume-down       fontawesome   AF49FE    volume-down

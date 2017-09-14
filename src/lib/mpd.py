@@ -375,6 +375,11 @@ def clear():
     mpc('clear')
 
 
+def update():
+    """Rescan media for changes."""
+    mpc('update')
+
+
 def current():
     """Fetch current track."""
     tracks = mpctracks('current')
