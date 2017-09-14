@@ -69,6 +69,7 @@ ICON_TRACK = u'icons/track.png'
 ICON_TRACK_QUEUED = u'icons/track-queued.png'
 ICON_TRACK_CURRENT = u'icons/track-current.png'
 ICON_TYPE = u'icons/tag.png'
+ICON_UPDATE = u'icons/update.png'
 ICON_UPDATE_AVAILABLE = u'icons/update-available.png'
 ICON_UPDATE_OK = u'icons/update-ok.png'
 ICON_VOLUME_UP = u'icons/volume-up.png'
@@ -92,7 +93,7 @@ def _track_keywords(track):
     return u'{t.title} {t.album} {t.artist}'.format(t=track)
 
 
-def _return_tracks(tracks, play_is_default=False, nouid=False):
+def _return_tracks(tracks):
     """Send list of tracks to Alfred."""
     # load queue, so we can change the track icon, etc.
     # if it's already in the queue
@@ -107,44 +108,26 @@ def _return_tracks(tracks, play_is_default=False, nouid=False):
 
         icon = ICON_TRACK
         sub = u'{t.artist} - {t.album}'.format(t=t)
-
-        if play_is_default:
-            action = 'play'
-            alt_action = 'remove'
-        else:
-            action = 'queue'
-            alt_action = 'play'
+        action = 'queue'
 
         if cur:
             icon = ICON_TRACK_CURRENT
             action = 'remove'
             sub = u'[playing] ' + sub
-            if play_is_default:
-                action = 'play'
-                alt_action = 'remove'
 
         elif inq:
             icon = ICON_TRACK_QUEUED
             action = 'remove'
             sub = u'[queued] ' + sub
-            if play_is_default:
-                action = 'play'
-                alt_action = 'remove'
 
-        if nouid:
-            uid = None
-
-        it = wf.add_item(
-            t.title,
-            sub,
-            autocomplete=u'{} '.format(t.title),
-            arg=t.file,
-            uid=uid,
-            copytext=full,
-            largetext=full,
-            valid=True,
-            icon=icon
-        )
+        it = wf.add_item(t.title, sub,
+                         autocomplete=u'{} '.format(t.title),
+                         arg=t.file,
+                         uid=uid,
+                         copytext=full,
+                         largetext=full,
+                         valid=True,
+                         icon=icon)
 
         it.setvar('ampd_artist', t.artist)
         it.setvar('ampd_album', t.album)
@@ -153,8 +136,8 @@ def _return_tracks(tracks, play_is_default=False, nouid=False):
         it.setvar('ampd_action', action)
         it.setvar('ampd_reopen', 'yes')
 
-        m = it.add_modifier('cmd', u'{} this track'.format(alt_action.title()))
-        m.setvar('ampd_action', alt_action)
+        m = it.add_modifier('cmd', u'Play this track')
+        m.setvar('ampd_action', 'play')
 
         m = it.add_modifier('alt', u'Clear queue & play this track')
         m.setvar('ampd_action', 'clear+play')
@@ -183,6 +166,7 @@ def do_action(opts):
         'stop': mpd.stop,
         'turn-up': mpd.volume_up,
         'turn-down': mpd.volume_down,
+        'update': mpd.update,
     }
 
     try:
@@ -255,6 +239,13 @@ def search_actions(query):
             'play pause',
             'playpause',
             ICON_PLAY,
+            None),
+        Action(
+            'Update library',
+            'Rescan media dir(s) for changes',
+            'update refresh',
+            'update',
+            ICON_UPDATE,
             None)
     ]
 
@@ -271,7 +262,7 @@ def search_actions(query):
                 Action(
                     'Volume Down',
                     'Decrease volume to {}%'.format(st.volume - 10),
-                    'volume down decrease',
+                    'volume down quiet decrease',
                     'turn-down',
                     ICON_VOLUME_DOWN,
                     None),
@@ -282,7 +273,7 @@ def search_actions(query):
                 Action(
                     'Volume Up',
                     'Increase volume to {}%'.format(st.volume + 10),
-                    'volume up increase',
+                    'volume up loud increase',
                     'turn-up',
                     ICON_VOLUME_UP,
                     None)
@@ -380,46 +371,19 @@ def search_actions(query):
     return wf.filter(query, actions, key=lambda a: a.keywords, min_score=30)
 
 
-def include_actions(query):
-    """Add actions to results."""
-    actions = search_actions(query)
-
-    for a in actions:
-        autocomplete = a.autocomplete if a.autocomplete else a.title
-        uid = a.action if a.action else a.keywords
-        it = wf.add_item(
-            a.title,
-            a.subtitle,
-            autocomplete=autocomplete,
-            arg=a.action,
-            uid='ampd.action.' + uid,
-            valid=(a.action is not None),
-            icon=a.icon,
-        )
-        if a.action:
-            it.setvar('ampd_action', a.action)
-        it.setvar('ampd_reopen', 'yes')
-
-    return len(actions)
-
-
 def do_search_queue(query, opts):
     """Show/search queued tracks."""
-    action_count = 0
-    if query:
-        action_count = include_actions(query)
-
     tracks = mpd.queue()
     if query:
         tracks = wf.filter(query, tracks, _track_keywords, min_score=30)
 
-    if not tracks and not action_count:
+    if not tracks:
         wf.add_item(u'No results', u'Try a different query?',
                     icon=ICON_WARNING)
         wf.send_feedback()
         return
 
-    return _return_tracks(tracks, play_is_default=True, nouid=True)
+    return _return_tracks(tracks)
 
 
 def do_search_artists(query, opts):
@@ -460,7 +424,7 @@ def do_search_albums(query, opts):
 
     for album in albums:
         wf.add_item(album,
-                    autocomplete=u'album:' + album + ' any:',
+                    autocomplete=u'album:' + album,
                     valid=False,
                     uid=u'album.' + album,
                     arg=album,
@@ -551,8 +515,24 @@ def do_search(opts):
             return func(query.strip(), opts)
 
     # Normal track search
-    if query:
-        action_count = include_actions(query)
+    actions = search_actions(query)
+
+    if actions:
+        for a in actions:
+            autocomplete = a.autocomplete if a.autocomplete else a.title
+            uid = a.action if a.action else a.keywords
+            it = wf.add_item(
+                a.title,
+                a.subtitle,
+                autocomplete=autocomplete,
+                arg=a.action,
+                uid='ampd.action.' + uid,
+                valid=(a.action is not None),
+                icon=a.icon,
+            )
+            if a.action:
+                it.setvar('ampd_action', a.action)
+            it.setvar('ampd_reopen', 'yes')
 
     try:
         tracks = mpd.search(query)
@@ -563,7 +543,7 @@ def do_search(opts):
 
     log.debug(u'%d result(s) for "%s"', len(tracks), query)
 
-    if not tracks and not action_count:
+    if not tracks and not actions:
         wf.add_item(u'No results', u'Try a different query?',
                     icon=ICON_WARNING)
         wf.send_feedback()
@@ -683,6 +663,7 @@ def do_stats(opts):
         )
 
     # artists, albums, etc.
+    # TODO: drill down into artists/albums/playlists etc.
     wf.add_item(_plural('artist', st.artists),
                 autocomplete='artists > ',
                 icon=ICON_ARTIST)
@@ -734,6 +715,7 @@ if __name__ == '__main__':
         default_settings=DEFAULT_SETTINGS,
         update_settings=UPDATE_SETTINGS,
         help_url=HELP_URL,
+        normalization='NFD',
     )
     log = wf.logger
     sys.exit(wf.run(main))
