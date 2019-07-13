@@ -293,7 +293,7 @@ def search_actions(query):
 
         if st.index > 1:
             canprev = True
-        if st.index < st.total:
+        if st.index < st.total + 1:
             cannext = True
 
     if st.playing:

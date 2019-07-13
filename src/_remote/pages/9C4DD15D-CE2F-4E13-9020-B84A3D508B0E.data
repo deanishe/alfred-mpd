@@ -14,23 +14,7 @@
 	<true/>
 	<key>items</key>
 	<array>
-		<dict>
-			<key>actionconfig</key>
-			<dict>
-				<key>autoworkflowuid</key>
-				<true/>
-				<key>triggerid</key>
-				<string>turn-up</string>
-			</dict>
-			<key>actionuid</key>
-			<string>remote.alfred.runworkflow</string>
-			<key>buttoniconid</key>
-			<string>40F8F1AF-5696-4C2C-9D52-782F33372E10</string>
-			<key>buttonlabel</key>
-			<string>Vol+</string>
-			<key>itemuid</key>
-			<string>67ED4626-4627-4142-ABA5-198AFC24D780</string>
-		</dict>
+		<dict/>
 		<dict/>
 		<dict/>
 		<dict>
@@ -56,22 +40,17 @@
 				<key>autoworkflowuid</key>
 				<true/>
 				<key>triggerid</key>
-				<string>turn-down</string>
+				<string>turn-up</string>
 			</dict>
 			<key>actionuid</key>
 			<string>remote.alfred.runworkflow</string>
 			<key>buttoniconid</key>
-			<string>CA972720-114C-4095-AA36-D2AE78C4D04E</string>
+			<string>40F8F1AF-5696-4C2C-9D52-782F33372E10</string>
 			<key>buttonlabel</key>
-			<string>Vol-</string>
+			<string>Vol+</string>
 			<key>itemuid</key>
-			<string>5655E32E-10AC-41EB-813E-E26435043A2A</string>
+			<string>67ED4626-4627-4142-ABA5-198AFC24D780</string>
 		</dict>
-		<dict/>
-		<dict/>
-		<dict/>
-		<dict/>
-		<dict/>
 		<dict/>
 		<dict/>
 		<dict>
@@ -80,17 +59,19 @@
 				<key>autoworkflowuid</key>
 				<true/>
 				<key>triggerid</key>
-				<string>previous</string>
+				<string>next</string>
 			</dict>
 			<key>actionuid</key>
 			<string>remote.alfred.runworkflow</string>
 			<key>buttoniconid</key>
-			<string>5D5FF636-428D-4279-ADA9-B85D02338880</string>
+			<string>8153B51F-8576-4208-9D14-B288FF2F041A</string>
 			<key>buttonlabel</key>
-			<string>Previous Track</string>
+			<string>Next Track</string>
 			<key>itemuid</key>
-			<string>0B91E955-73FE-4346-A5D6-9F2726B2C547</string>
+			<string>53D344AF-6686-4568-98D7-8C39D54DDE34</string>
 		</dict>
+		<dict/>
+		<dict/>
 		<dict>
 			<key>actionconfig</key>
 			<dict>
@@ -131,16 +112,35 @@
 				<key>autoworkflowuid</key>
 				<true/>
 				<key>triggerid</key>
-				<string>next</string>
+				<string>turn-down</string>
 			</dict>
 			<key>actionuid</key>
 			<string>remote.alfred.runworkflow</string>
 			<key>buttoniconid</key>
-			<string>8153B51F-8576-4208-9D14-B288FF2F041A</string>
+			<string>CA972720-114C-4095-AA36-D2AE78C4D04E</string>
 			<key>buttonlabel</key>
-			<string>Next Track</string>
+			<string>Vol-</string>
 			<key>itemuid</key>
-			<string>53D344AF-6686-4568-98D7-8C39D54DDE34</string>
+			<string>5655E32E-10AC-41EB-813E-E26435043A2A</string>
+		</dict>
+		<dict/>
+		<dict/>
+		<dict>
+			<key>actionconfig</key>
+			<dict>
+				<key>autoworkflowuid</key>
+				<true/>
+				<key>triggerid</key>
+				<string>previous</string>
+			</dict>
+			<key>actionuid</key>
+			<string>remote.alfred.runworkflow</string>
+			<key>buttoniconid</key>
+			<string>5D5FF636-428D-4279-ADA9-B85D02338880</string>
+			<key>buttonlabel</key>
+			<string>Previous Track</string>
+			<key>itemuid</key>
+			<string>0B91E955-73FE-4346-A5D6-9F2726B2C547</string>
 		</dict>
 	</array>
 	<key>subtitle</key>
