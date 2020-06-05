@@ -9,7 +9,8 @@ Control MPD from [Alfred][alfred].
 Installation
 ------------
 
-Download the latest version from [GitHub releases][gh-releases].
+Download the latest version from [GitHub releases][gh-releases]. 
+Be shure to have `mpc` installed, for example via [Homebrew](https://brew.sh).
 
 
 Usage
